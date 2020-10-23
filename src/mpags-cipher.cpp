@@ -6,105 +6,8 @@
 // For std::isalpha and std::isupper
 #include <cctype>
 
-std::string translateChar(char inputChar)
-{
-  std::string inputText = "";
-
-  if (std::isalpha(inputChar)) {
-      inputText += std::toupper(inputChar);
-      return inputText;
-    }
-
-    // Transliterate digits to English words
-    switch (inputChar) {
-      case '0':
-	inputText += "ZERO";
-	break;
-      case '1':
-	inputText += "ONE";
-	break;
-      case '2':
-	inputText += "TWO";
-	break;
-      case '3':
-	inputText += "THREE";
-	break;
-      case '4':
-	inputText += "FOUR";
-	break;
-      case '5':
-	inputText += "FIVE";
-	break;
-      case '6':
-	inputText += "SIX";
-	break;
-      case '7':
-	inputText += "SEVEN";
-	break;
-      case '8':
-	inputText += "EIGHT";
-	break;
-      case '9':
-	inputText += "NINE";
-	break;
-    }
-
-    return inputText;
-}
-
-int processCommandLine(const std::vector<std::string>& cmdLineArgs, bool& helpRequested, bool& versionRequested, std::string& inputFile, std::string outputFile)
-{
-  typedef std::vector<std::string>::size_type size_type;
-  const size_type nCmdLineArgs {cmdLineArgs.size()};
-
-  // Process command line arguments - ignore zeroth element, as we know this to
-  // be the program name and don't need to worry about it
-  for (size_type i {1}; i < nCmdLineArgs; ++i) {
-
-    if (cmdLineArgs[i] == "-h" || cmdLineArgs[i] == "--help") {
-      helpRequested = true;
-    }
-    else if (cmdLineArgs[i] == "--version") {
-      versionRequested = true;
-    }
-    else if (cmdLineArgs[i] == "-i") {
-      // Handle input file option
-      // Next element is filename unless -i is the last argument
-      if (i == nCmdLineArgs-1) {
-	std::cerr << "[error] -i requires a filename argument" << std::endl;
-	// exit main with non-zero return to indicate failure
-	return 1;
-      }
-      else {
-	// Got filename, so assign value and advance past it
-	inputFile = cmdLineArgs[i+1];
-	++i;
-      }
-    }
-    else if (cmdLineArgs[i] == "-o") {
-      // Handle output file option
-      // Next element is filename unless -o is the last argument
-      if (i == nCmdLineArgs-1) {
-	std::cerr << "[error] -o requires a filename argument" << std::endl;
-	// exit main with non-zero return to indicate failure
-	return 1;
-      }
-      else {
-	// Got filename, so assign value and advance past it
-	outputFile = cmdLineArgs[i+1];
-	++i;
-      }
-    }
-    else {
-      // Have an unknown flag to output error message and return non-zero
-      // exit status to indicate failure
-      std::cerr << "[error] unknown argument '" << cmdLineArgs[i] << "'\n";
-      return 1;
-    }
-  }
-
-  return 0;
-}
+#include "TransformChar.hpp"
+#include "processCommandLine.hpp"
 
 // Main function of the mpags-cipher program
 int main(int argc, char* argv[])
@@ -113,7 +16,7 @@ int main(int argc, char* argv[])
   const std::vector<std::string> cmdLineArgs {argv, argv+argc};
 
   // Add a typedef that assigns another name for the given type for clarity
-  typedef std::vector<std::string>::size_type size_type;
+  //typedef std::vector<std::string>::size_type size_type;
   
 
   // Options that might be set by the command-line arguments
