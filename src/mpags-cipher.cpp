@@ -52,21 +52,10 @@ std::string translateChar(char inputChar)
     return inputText;
 }
 
-// Main function of the mpags-cipher program
-int main(int argc, char* argv[])
+int processCommandLine(const std::vector<std::string>& cmdLineArgs, bool& helpRequested, bool& versionRequested, std::string& inputFile, std::string outputFile)
 {
-  // Convert the command-line arguments into a more easily usable form
-  const std::vector<std::string> cmdLineArgs {argv, argv+argc};
-
-  // Add a typedef that assigns another name for the given type for clarity
   typedef std::vector<std::string>::size_type size_type;
   const size_type nCmdLineArgs {cmdLineArgs.size()};
-
-  // Options that might be set by the command-line arguments
-  bool helpRequested {false};
-  bool versionRequested {false};
-  std::string inputFile {""};
-  std::string outputFile {""};
 
   // Process command line arguments - ignore zeroth element, as we know this to
   // be the program name and don't need to worry about it
@@ -114,6 +103,32 @@ int main(int argc, char* argv[])
     }
   }
 
+  return 0;
+}
+
+// Main function of the mpags-cipher program
+int main(int argc, char* argv[])
+{
+  // Convert the command-line arguments into a more easily usable form
+  const std::vector<std::string> cmdLineArgs {argv, argv+argc};
+
+  // Add a typedef that assigns another name for the given type for clarity
+  typedef std::vector<std::string>::size_type size_type;
+  
+
+  // Options that might be set by the command-line arguments
+  bool helpRequested {false};
+  bool versionRequested {false};
+  std::string inputFile {""};
+  std::string outputFile {""};
+
+  if (processCommandLine(cmdLineArgs, helpRequested, versionRequested, inputFile, outputFile) != 0)
+  {
+    return 1;
+  }
+
+  
+
   // Handle help, if requested
   if (helpRequested) {
     // Line splitting for readability
@@ -157,7 +172,7 @@ int main(int argc, char* argv[])
   while(std::cin >> inputChar)
   {
     // Uppercase alphabetic characters
-    inputText += translateChar(inputChar)
+    inputText += translateChar(inputChar);
 
     // If the character isn't alphabetic or numeric, DONT add it.
     // Our ciphers can only operate on alphabetic characters.
