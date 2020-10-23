@@ -8,13 +8,14 @@ add_executable(mpags-cipher
 mpags-cipher.cpp
 MPAGSCIPHER/TransformChar.cpp
 MPAGSCIPHER/processCommandLine.cpp
+MPAGSCIPHER/CaesarCipher.cpp
 )
 
 target_include_directories(mpags-cipher
 PRIVATE MPAGSCIPHER
 )
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wfatal-errors -Wshadow -pedantic")
+#set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wfatal-errors -Wshadow -pedantic")
 
 set(CMAKE_CXX_STANDARD 14)
 

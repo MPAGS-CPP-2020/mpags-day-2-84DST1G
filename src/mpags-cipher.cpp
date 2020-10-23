@@ -1,5 +1,6 @@
 // Standard Library includes
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -8,6 +9,7 @@
 
 #include "TransformChar.hpp"
 #include "processCommandLine.hpp"
+#include "CaesarCipher.hpp"
 
 // Main function of the mpags-cipher program
 int main(int argc, char* argv[])
@@ -24,8 +26,10 @@ int main(int argc, char* argv[])
   bool versionRequested {false};
   std::string inputFile {""};
   std::string outputFile {""};
+  int cipherKey {0};
+  bool encrypt {true};
 
-  if (processCommandLine(cmdLineArgs, helpRequested, versionRequested, inputFile, outputFile) != 0)
+  if (processCommandLine(cmdLineArgs, helpRequested, versionRequested, inputFile, outputFile, cipherKey, encrypt) != 0)
   {
     return 1;
   }
@@ -64,32 +68,75 @@ int main(int argc, char* argv[])
 
   // Read in user input from stdin/file
   // Warn that input file option not yet implemented
+
+  bool cmdIn {false};
   if (!inputFile.empty()) {
-    std::cout << "[warning] input from file ('"
-              << inputFile
-              << "') not implemented yet, using stdin\n";
-  }
+    std::ifstream in_file {inputFile};
+    if (in_file.good())
+    {
+      while(in_file >> inputChar)
+      {
+        // Uppercase alphabetic characters
+        inputText += translateChar(inputChar);
 
-  // Loop over each character from user input
-  // (until Return then CTRL-D (EOF) pressed)
-  while(std::cin >> inputChar)
+        // If the character isn't alphabetic or numeric, DONT add it.
+        // Our ciphers can only operate on alphabetic characters.
+      }
+    }
+    else
+    {
+      cmdIn = true;
+    }
+    
+
+  }
+  else
   {
-    // Uppercase alphabetic characters
-    inputText += translateChar(inputChar);
-
-    // If the character isn't alphabetic or numeric, DONT add it.
-    // Our ciphers can only operate on alphabetic characters.
+    cmdIn = true;
   }
+
+
+  if (cmdIn)
+  {
+    // Loop over each character from user input
+    // (until Return then CTRL-D (EOF) pressed)
+    while(std::cin >> inputChar)
+    {
+      // Uppercase alphabetic characters
+      inputText += translateChar(inputChar);
+
+      // If the character isn't alphabetic or numeric, DONT add it.
+      // Our ciphers can only operate on alphabetic characters.
+    }
+  }
+
+  std::string outputText {runCaesarWordSalad(inputText, cipherKey, encrypt)};
 
   // Output the transliterated text
   // Warn that output file option not yet implemented
+  bool cmdOut {false};
   if (!outputFile.empty()) {
-    std::cout << "[warning] output to file ('"
-              << outputFile
-              << "') not implemented yet, using stdout\n";
+    std::ofstream out_file {inputFile};
+    if (out_file.good())
+    {
+      out_file << outputText << std::endl;
+    }
+    else
+    {
+      cmdOut = true;
+    }
+  }
+  else
+  {
+    cmdOut = true;
   }
 
-  std::cout << inputText << std::endl;
+  if (cmdOut)
+  {
+    //Output via cmd lime
+    std::cout << outputText << std::endl;
+  }
+
 
   // No requirement to return from main, but we do so for clarity
   // and for consistency with other functions
